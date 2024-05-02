@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Let's play Hand Cricket</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: green;
+            height: 100%;
+            width: 100%;
+        }
+
+        #Cricketpitch {
+            position: relative;
+            background-color: #0A8043;
+            height: 100px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        #stump,
+        #stump-right {
+            display: flex;
+            position: absolute;
+            top: 25px;
+        }
+
+        .cricketStamp {
+            transform: rotate(90deg);
+            position: absolute;
+            top: 50%;
+            left: 16.67%;
+            width: 2px;
+            height: 40px;
+            background-color: #fff;
+        }
+
+        #cricketbat {
+            position: absolute;
+            width: 43px;
+            height: 11px;
+            background-color: #e9f5ead6;
+            top: 50%;
+            left: 4%;
+            transform: rotate(58deg);
+            z-index: 1;
+            border-radius: 3px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #cricketbathandel {
+            height: 28px;
+            position: absolute;
+            width: 4px;
+            background-color: black;
+            top: 20px;
+            left: 25px;
+            transform: rotate(-34deg);
+        }
+
+        .cricketball {
+            position: absolute;
+            background-color: #c90f0f57;
+            width: 14px;
+            height: 14px;
+            left: 427px;
+            box-shadow: 4px 7px 6px 3px;
+            top: 46px;
+            border: 1px solid;
+            border-radius: 12px 12px 12px 12px;
+        }
+
+        .ball-move {
+            animation: ballMoveAnimation 1s forwards;
+        }
+
+        @keyframes ballMoveAnimation {
+            0% {
+                left: 427px;
+                top: 46px;
+            }
+
+            50% {
+                left: 235px;
+                top: 46px;
+            }
+
+            75% {
+                left: 175px;
+                top: 46px;
+            }
+
+            100% {
+                left: 50px;
+                top: 10px;
+            }
+        }
+
+        .useroption {
+            position: absolute;
+            top: 126px;
+            left: 45px;
+            opacity: 0;
+        }
+
+        .useroption button {
+            width: 32px;
+            height: 28px;
+            color: #e5e2e1;
+            background-color: black;
+            border: none;
+            box-sizing: content-box;
+            box-shadow: 0.1px 0.3px 0.3px 0.1px white;
+        }
+
+        .prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            z-index: 1000;
+            animation: slideIn 0.5s forwards;
+        }
+
+        .prompt p {
+            margin-bottom: 10px;
+        }
+
+        .prompt button {
+            padding: 8px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .prompt button:hover {
+            background-color: #45a049;
+        }
+
+        #stats {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* Display the GIF images */
+        .gifImage {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        /* Set the size of GIF images for mobile devices */
+        @media (max-width: 600px) {
+            .gifImage {
+                display: none;
+                /* Show the GIF images on smaller screens */
+                width: 80px;
+                /* Adjust the width */
+                height: 80px;
+                /* Adjust the height */
+            }
+
+            .useroption {
+                top: auto;
+                bottom: 10px;
+                /* Adjust the distance from the bottom */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            #Cricketpitch {
+                height: 50px;
+                /* Adjust the height */
+            }
+
+            .cricketball {
+                left: 70%;
+                /* Adjust the initial position */
+                top: 50%;
+                /* Adjust the initial position */
+            }
+
+            .victory-message,
+            .defeat-message {
+                width: 80%;
+                /* Adjust the width */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -70%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Animation for victory message */
+        @keyframes victoryAnimation {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Victory message style */
+        .victory-message {
+            position: fixed;
+            top: 23%;
+            left: 43%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 255, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            animation: victoryAnimation 0.5s forwards;
+            z-index: 1001;
+            text-align: center;
+        }
+
+        /* Animation for defeat message */
+        @keyframes defeatAnimation {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #cricketbathandel {
+            height: 28px;
+            position: absolute;
+            width: 4px;
+            background-color: black;
+            top: 20px;
+            left: 21px;
+            transform: rotate(-34deg);
+        }
+
+        /* Defeat message style */
+        .defeat-message {
+            position: fixed;
+            top: 23%;
+            left: 43%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            animation: defeatAnimation 0.5s forwards;
+            z-index: 1001;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .prompt button {
+            padding: 8px 20px;
+            margin-top: 2px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .prompt button:hover {
+            background-color: #45a049;
+        }
+            /* Adjust cricket pitch height */
+            #Cricketpitch {
+                height: 100px;
+            }
+
+            /* Adjust cricket ball initial position */
+            .cricketball {
+                left: 70%;
+                top: 50%;
+            }
+
+            /* Adjust the size and position of GIF images */
+            .gifImage {
+                width: 80px;
+                height: 80px;
+            }
+
+            /* Adjust the position of user option buttons */
+            .useroption {
+                top: 110px;
+
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            /* Adjust victory and defeat message width and position */
+            .victory-message,
+            .defeat-message {
+                width: 80%;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div id="Cricketpitch">
+            <!-- Left side stumps and lines -->
+            <div id="stump">
+                <div class="cricketStamp" style="margin-top: 10px;"></div>
+                <div class="cricketStamp" style="margin-top: 5px;"></div>
+                <div class="cricketStamp" style="margin-top: 15px;"></div>
+            </div>
+            <div class="pitchline"></div>
+            <div class="wline"></div>
+            <div class="wline1"></div>
+
+            <!-- Right side stumps and lines -->
+            <div id="stump-right" style="right: 0;">
+                <div class="cricketStamp" style="margin-top: 10px;"></div>
+                <div class="cricketStamp" style="margin-top: 5px;"></div>
+                <div class="cricketStamp" style="margin-top: 15px;"></div>
+            </div>
+            <div class="pitchline-right" style="right: 80px;"></div>
+            <div class="wline-right" style="right: 0;"></div>
+            <div class="wline1-right" style="right: 0;"></div>
+            <div id="cricketbathandel"></div>
+            <div id="cricketbat"></div>
+            <div class="cricketball"></div>
+
+            <div class="useroption" id="test">
+                <!-- Buttons for user selection -->
+                <button onclick="CalculateScore(0)">0</button>
+                <button onclick="CalculateScore(1)">1</button>
+                <button onclick="CalculateScore(2)">2</button>
+                <button onclick="CalculateScore(3)">3</button>
+                <button onclick="CalculateScore(4)">4</button>
+                <button onclick="CalculateScore(6)">6</button>
+            </div>
+            <div class="prompt" id="overSelection">
+                <!-- Prompt for selecting number of overs -->
+                <p>Select number of overs:</p>
+                <button onclick="selectOvers(5)">5 overs</button>
+                <button onclick="selectOvers(10)">10 overs</button>
+                <button onclick="selectOvers(20)">20 overs</button>
+            </div>
+        </div>
+    </div>
+    <div id="stats"></div>
+
+    <!-- GIF images -->
+    <img class="gifImage" src="https://media.tenor.com/images/b9df3a969231b09088c91d7b822583d6/tenor.gif"
+        alt="One Run GIF">
+    <img class="gifImage" src="https://s4.scoopwhoop.com/anj/sachin/838739553.gif" alt="Two and Three Runs GIF">
+    <img class="gifImage"
+        src="https://4.bp.blogspot.com/-COQD2IFjWTg/UNiRVZUdvQI/AAAAAAAADTw/rtUwFl5Hk-8/s1600/offdrive.gif"
+        alt="Zero Run GIF">
+    <img class="gifImage" src="https://media.tenor.com/images/b7e573159eeff7160a51319ff8b9bf71/tenor.gif"
+        alt="Wicket GIF">
+    <img class="gifImage" src="https://i.pinimg.com/originals/4c/04/37/4c0437d8aae9b4a297039519a856e869.gif" alt="">
+    <!-- Victory Message -->
+    <div id="victoryMessage" class="victory-message" style="display: none;">
+        <h2>You Win!</h2>
+        <p>Total Runs: <span id="totalRuns"></span></p>
+        <p>Total Balls Played: <span id="totalBalls"></span></p>
+        <p>Total Wickets: <span id="totalWickets"></span></p>
+    </div>
+
+    <!-- Defeat Message -->
+    <div id="defeatMessage" class="defeat-message" style="display: none;">
+        <h2>You Lost!</h2>
+        <p>Total Runs: <span id="totalRunsDefeat"></span></p>
+        <p>Total Balls Played: <span id="totalBallsDefeat"></span></p>
+        <p>Total Wickets: <span id="totalWicketsDefeat"></span></p>
+    </div>
+
+    <script>
+        // Your JavaScript code
+        // Get the bat and ball elements
+        const bat = document.getElementById('cricketbat');
+        const ball = document.querySelector('.cricketball');
+        const gifImages = document.querySelectorAll('.gifImage');
+        const victoryMessage = document.getElementById('victoryMessage');
+        const defeatMessage = document.getElementById('defeatMessage');
+
+        // Arrays to store scores and balls played
+        let userScores = [];
+        let totalOvers = 0;
+        let ballsPlayed = 0;
+        let currentOver = 0;
+        let currentBall = 0;
+        let totalWickets = 0;
+        let targetScore = 0;
+
+        function hitBall() {
+            // Add ball-move class for animation
+            ball.classList.add('ball-move');
+
+            // Remove ball-move class after animation completes
+            setTimeout(() => {
+                ball.classList.remove('ball-move');
+            }, 1000); // The animation duration is 1s
+        }
+
+        // Event listener for bat hit
+        bat.addEventListener('click', hitBall);
+
+        function selectOvers(overs) {
+            totalOvers = overs;
+            generateTargetScore(overs);
+            document.getElementById('overSelection').style.display = 'none';
+            document.getElementById('test').style.opacity = 1;
+            updateStats();
+        }
+
+        function playBall() {
+            if (ballsPlayed < totalOvers * 6) {
+                ballsPlayed++;
+                currentBall++;
+                if (ballsPlayed % 6 == 0) {
+                    currentOver++;
+                    currentBall = 0;
+                    updateStats();
+                }
+            } else {
+                endGame();
+            }
+        }
+
+        function CalculateScore(userSelection) {
+            // Generate a random integer between 0 and 6
+            const randomNumber = Math.floor(Math.random() * 7);
+
+            if (userSelection == randomNumber) {
+                alert(" you're out");
+                totalWickets++;
+                if (totalWickets === 10 || targetScore > userScores.reduce((a, b) => a + b, 0)) {
+                    endGame();
+                }
+            } else {
+                userScores.push(userSelection);
+                playBall();
+                if (userSelection == 6 && userSelection != randomNumber) {
+                    gifImages[0].style.display = 'block';
+                    setTimeout(() => {
+                        gifImages[0].style.display = 'none';
+                    }, 2000); // Hide after 2 seconds
+                } else if (userSelection == 4 && userSelection != randomNumber) {
+                    gifImages[1].style.display = 'block';
+                    setTimeout(() => {
+                        gifImages[1].style.display = 'none';
+                    }, 2000); // Hide after 2 seconds
+                } else if ((userSelection == 2 || userSelection == 3) && userSelection != randomNumber) {
+                    gifImages[2].style.display = 'block';
+                    setTimeout(() => {
+                        gifImages[2].style.display = 'none';
+                    }, 2000); // Hide after 2 seconds
+                } else if (userSelection == 0 && userSelection != randomNumber) {
+                    gifImages[3].style.display = 'block';
+                    setTimeout(() => {
+                        gifImages[3].style.display = 'none';
+                    }, 2000); // Hide after 2 seconds
+                } else if (userSelection == 1 && userSelection != randomNumber) {
+                    gifImages[4].style.display = 'block';
+                    setTimeout(() => {
+                        gifImages[4].style.display = 'none';
+                    }, 2000); // Hide after 2 seconds
+                }
+                hitBall();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stats').innerText = `Traget:${targetScore}|Balls Played: ${currentOver}.${currentBall} |wickets:${totalWickets} | User Runs: ${userScores.reduce((a, b) => a + b, 0)}`;
+        }
+
+        function generateTargetScore(overs) {
+            switch (overs) {
+                case 5:
+                    targetScore = Math.floor(Math.random() * (180 - 150 + 1) + 150);
+                    break;
+                case 10:
+                    targetScore = Math.floor(Math.random() * (400 - 250 + 1) + 250);
+                    break;
+                case 20:
+                    targetScore = Math.floor(Math.random() * (600 - 350 + 1) + 350);
+                    break;
+                default:
+                    targetScore = 0;
+            }
+        }
+
+        function endGame() {
+            if (targetScore > userScores.reduce((a, b) => a + b, 0) && totalWickets === 10) {
+                displayDefeatMessage();
+            } else if (targetScore > userScores.reduce((a, b) => a + b, 0) && currentOver === totalOvers) {
+                displayDefeatMessage();
+            } else if (targetScore < userScores.reduce((a, b) => a + b, 0)) {
+                displayVictoryMessage();
+            }
+        }
+
+        function displayVictoryMessage() {
+            document.getElementById('totalRuns').textContent = userScores.reduce((a, b) => a + b, 0);
+            document.getElementById('totalBalls').textContent = ballsPlayed;
+            document.getElementById('totalWickets').textContent = totalWickets;
+            victoryMessage.style.display = 'block';
+        }
+
+        function displayDefeatMessage() {
+            document.getElementById('totalRunsDefeat').textContent = userScores.reduce((a, b) => a + b, 0);
+            document.getElementById('totalBallsDefeat').textContent = ballsPlayed;
+            document.getElementById('totalWicketsDefeat').textContent = totalWickets;
+            defeatMessage.style.display = 'block';
+        }
+
+        setInterval(updateStats, 100);
+    </script>
+</body>
+
+</html>
